@@ -1,0 +1,16 @@
+{
+	"name": "chief_ministers",
+	"properties": {
+		"content": {
+			"query": "create view chief_ministers\nas\nselect\n    Name\n   ,case State\n      when 'Delhi (NCT)' then 'Delhi'\n      when 'Puducherry (UT)' then 'Puducherry'\n      else State\n    end as State\nfrom\n    OPENROWSET(\n        BULK 'https://hgsa02.dfs.core.windows.net/government/ChiefMinisters.csv',\n        FORMAT = 'CSV',\n        PARSER_VERSION='2.0',\n        HEADER_ROW=True\n    ) AS [result]\n",
+			"metadata": {
+				"language": "sql"
+			},
+			"currentConnection": {
+				"name": "government",
+				"type": "SqlOnDemand"
+			}
+		},
+		"type": "SqlQuery"
+	}
+}

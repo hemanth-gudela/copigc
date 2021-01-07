@@ -1,0 +1,16 @@
+{
+	"name": "members_of_parliament",
+	"properties": {
+		"content": {
+			"query": "create view members_of_parliament\nas\nselect\n    mp.[Name],\n    mp.Party, \n    case mp.[State] when 'NCT of Delhi' then 'Delhi' else mp.[State] end as [State], \n    mp.Constituency, \n    mp.Reservation\nfrom\n    OPENROWSET(\n        BULK 'https://hgsa02.dfs.core.windows.net/government/MembersOfParliament.csv',\n        FORMAT = 'CSV',\n        PARSER_VERSION='2.0',\n        HEADER_ROW=True\n    ) mp\n\n",
+			"metadata": {
+				"language": "sql"
+			},
+			"currentConnection": {
+				"name": "government",
+				"type": "SqlOnDemand"
+			}
+		},
+		"type": "SqlQuery"
+	}
+}

@@ -1,0 +1,16 @@
+{
+	"name": "legislative_assemblies_summary",
+	"properties": {
+		"content": {
+			"query": "create view legislative_assemblies_summary\nas\nselect\n    ls.State\n  , SummerCapital\n  , WinterCapital\n  , cast(MembersTotal as int) as MembersTotal\n  , LeadingParty\n  , cm.Name as ChiefMinister\nfrom\n    openrowset(\n        bulk 'https://hgsa02.dfs.core.windows.net/government/LegislativeAssemblies.csv',\n        format = 'csv',\n        parser_version='2.0',\n        header_row=true\n    ) ls\nleft outer join chief_ministers AS cm\non ls.State = cm.State\n",
+			"metadata": {
+				"language": "sql"
+			},
+			"currentConnection": {
+				"name": "government",
+				"type": "SqlOnDemand"
+			}
+		},
+		"type": "SqlQuery"
+	}
+}

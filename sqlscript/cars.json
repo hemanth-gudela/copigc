@@ -1,0 +1,16 @@
+{
+	"name": "cars",
+	"properties": {
+		"content": {
+			"query": "create view cars\nas\nselect\n    RegistrationNumber\n   ,CarMake\n   ,CarModel\n   ,cast(CO2 as int) as CO2\n   ,convert(date, RegistrationDate, 104) as RegistrationDate\n   ,convert(date, ContractStartDate, 104) as ContractStartDate\n   ,cast(ContractPeriodMonths as int) as ContractPeriodMonths\n   ,datediff(month, convert(date, ContractStartDate, 104), getdate()) as ContractMonthsUsed\n   ,cast(ContractPeriodMonths as int) -   datediff(month, convert(date, ContractStartDate, 104), getdate()) as ContractMonthsLeft   \n   ,cast(KilometersDriven as int) as KilometersDriven\n   ,cast(LeasingRent as decimal(8,2)) as AcutalMonthlyRent\n   ,case \n        when cast(CO2 as int) < 80 then 0.6 * cast(LeasingRent as decimal(8,2))\n        when cast(CO2 as int) < 130 then 0.65 * cast(LeasingRent as decimal(8,2))\n        when cast(CO2 as int) < 175 then 0.7 * cast(LeasingRent as decimal(8,2))\n        else cast(LeasingRent as decimal(8,2))\n    end as DiscountedMonthlyRent\n   ,case \n        when cast(CO2 as int) < 80 then 40\n        when cast(CO2 as int) < 130 then 35\n        when cast(CO2 as int) < 175 then 30\n        else 0\n    end as DiscountPercentage\n   ,cast(LeasingRent as decimal(8,2))  -\n    (\n       case \n        when cast(CO2 as int) < 80 then 0.6 * cast(LeasingRent as decimal(8,2))\n        when cast(CO2 as int) < 130 then 0.65 * cast(LeasingRent as decimal(8,2))\n        when cast(CO2 as int) < 175 then 0.7 * cast(LeasingRent as decimal(8,2))\n        else cast(LeasingRent as decimal(8,2))\n       end \n    ) as DiscountedAmount    \n   ,cast(BasePrice as decimal(8,2)) as BasePrice\n   ,cast(TotalPrice as decimal(8,2)) as TotalPrice\n   ,cast(TaxValue as int) as TaxValue\nFROM\n    OPENROWSET(\n        BULK 'https://hgsa02.dfs.core.windows.net/cars/cars.csv',\n        FORMAT = 'CSV',\n        PARSER_VERSION='2.0',\n        HEADER_ROW = TRUE\n    ) AS [result]\n",
+			"metadata": {
+				"language": "sql"
+			},
+			"currentConnection": {
+				"name": "leasing",
+				"type": "SqlOnDemand"
+			}
+		},
+		"type": "SqlQuery"
+	}
+}

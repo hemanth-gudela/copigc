@@ -1,0 +1,16 @@
+{
+	"name": "legislative_assembly_details",
+	"properties": {
+		"content": {
+			"query": "create view legislative_assemblies_details\nas\nselect \n    'Andhra Pradesh' as State\n   ,la.District\n   ,la.AssemblyConstituency\n   ,la.Party as AssemblyParty\n   ,la.LegislativeMember \n   ,la.LoksabhaConstituency\n   ,mp.Party as ParliamentParty\n   ,mp.ParliamentMember\n   ,cast(mp.ElectedYear as int) as MPElectedYear\nfrom\n    openrowset(\n        bulk 'https://hgsa02.dfs.core.windows.net/government/AP/LegislativeAssembly.csv',\n        format = 'csv',\n        parser_version='2.0',\n        header_row=true\n    ) as la\nleft outer join\n    openrowset(\n        bulk 'https://hgsa02.dfs.core.windows.net/government/AP/MembersOfParliament.csv',\n        format = 'csv',\n        parser_version='2.0',\n        header_row=true\n    ) as mp\non la.LoksabhaConstituency = mp.LoksabhaConstituency\n",
+			"metadata": {
+				"language": "sql"
+			},
+			"currentConnection": {
+				"name": "government",
+				"type": "SqlOnDemand"
+			}
+		},
+		"type": "SqlQuery"
+	}
+}
